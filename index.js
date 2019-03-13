@@ -276,19 +276,13 @@ function mkdir(title) {
 // 下载
 function downliu(dir, links, callback) {
     console.log('发现%d个文件，准备开始下载...', links.length);
-    //eachLimits 控制下载文件并行上限 第二个参数 options.downLimit 就是配置
-    // async.eachLimit(links, downOptions.downLimit, (url,cb) => {
+    //mapLimit 控制下载文件并行上限 第二个参数 options.downLimit 就是配置
     async.mapLimit(links, downOptions.downLimit, (url,cb) => {
         //获取url最后的名字
         var fileUrl = path.basename(url.url).replace(/&nbsp;/g,'');
-        //去掉/
         var toPath = path.join(downOptions.dirfile + dir, url.name);
         console.log(`开始下载文件：${url.name}，保存到：${dir}`);
-        //这个地方要详细说了
         var name = toPath+"."+url.ext;
-        // if(fs.existsSync(name)){
-        //     name = toPath+fileUrl;
-        // }
         
         request(encodeURI(url.url),{timeout: downOptions.downLimit*60000}).on('error', function(err) {
             console.log(`文件下载失败：${url.name}`, err);
